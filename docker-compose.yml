@@ -1,0 +1,47 @@
+# Docker Compose for workflow-orchestration-queue
+# Local development and testing environment
+
+services:
+  notifier:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_REPO=${GITHUB_REPO}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - PORT=8000
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - os-apow-network
+
+  sentinel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "-m", "src.orchestrator_sentinel"]
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_REPO=${GITHUB_REPO}
+      - SENTINEL_ID=sentinel-001
+      - SENTINEL_BOT_LOGIN=${SENTINEL_BOT_LOGIN}
+      - POLL_INTERVAL=60
+      - HEARTBEAT_INTERVAL=300
+    restart: unless-stopped
+    networks:
+      - os-apow-network
+    depends_on:
+      notifier:
+        condition: service_healthy
+
+networks:
+  os-apow-network:
+    driver: bridge
