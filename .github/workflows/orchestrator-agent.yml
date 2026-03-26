@@ -211,14 +211,20 @@ jobs:
         if: failure() && github.event_name == 'issues'
         env:
           GH_TOKEN: ${{ secrets.GH_ORCHESTRATION_AGENT_TOKEN || secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          LABEL_NAME: ${{ github.event.label.name }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ACTOR: ${{ github.actor }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
         run: |
           bash ./scripts/post-failure-comment.sh \
-            "${{ github.event.issue.number }}" \
-            "${{ github.event.label.name }}" \
-            "${{ github.event.issue.title }}" \
-            "${{ github.actor }}" \
-            "${{ github.event_name }}" \
-            "${{ github.event.action }}"
+            "$ISSUE_NUMBER" \
+            "$LABEL_NAME" \
+            "$ISSUE_TITLE" \
+            "$ACTOR" \
+            "$EVENT_NAME" \
+            "$EVENT_ACTION"
 
       - name: Dump server-side logs from devcontainer
         if: always() && vars.DEBUG_ORCHESTRATOR == 'true'
@@ -293,11 +299,17 @@ jobs:
       - name: Run failure handler
         env:
           GH_TOKEN: ${{ secrets.GH_ORCHESTRATION_AGENT_TOKEN || secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          LABEL_NAME: ${{ github.event.label.name }}
+          ACTOR: ${{ github.actor }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
           bash ./scripts/on-failure-handler.sh \
-            "${{ github.event_name }}" \
-            "${{ github.event.action }}" \
-            "${{ github.event.label.name }}" \
-            "${{ github.actor }}" \
-            "${{ github.event.issue.number }}" \
-            "${{ github.event.issue.title }}"
+            "$EVENT_NAME" \
+            "$EVENT_ACTION" \
+            "$LABEL_NAME" \
+            "$ACTOR" \
+            "$ISSUE_NUMBER" \
+            "$ISSUE_TITLE"
