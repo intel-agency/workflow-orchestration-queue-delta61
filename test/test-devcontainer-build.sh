@@ -20,23 +20,23 @@ done
 
 # Step 1: Build the devcontainer
 echo "--- Step 1: Building devcontainer ---"
-devcontainer build --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.github/.devcontainer/devcontainer.json"
+devcontainer build --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.devcontainer/devcontainer.json"
 echo ""
 
 # Step 2: Start the devcontainer
 echo "--- Step 2: Starting devcontainer ---"
-devcontainer up --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.github/.devcontainer/devcontainer.json"
+devcontainer up --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.devcontainer/devcontainer.json"
 echo ""
 
 # Step 3: Run tool smoke tests inside the container
 echo "--- Step 3: Running tool smoke tests ---"
-devcontainer exec --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.github/.devcontainer/devcontainer.json" \
+devcontainer exec --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.devcontainer/devcontainer.json" \
   bash test/test-devcontainer-tools.sh
 echo ""
 
 # Step 4: Run prompt assembly tests inside the container
 echo "--- Step 4: Running prompt assembly tests ---"
-devcontainer exec --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.github/.devcontainer/devcontainer.json" \
+devcontainer exec --workspace-folder "$REPO_ROOT" --config "$REPO_ROOT/.devcontainer/devcontainer.json" \
   bash test/test-prompt-assembly.sh
 echo ""
 
